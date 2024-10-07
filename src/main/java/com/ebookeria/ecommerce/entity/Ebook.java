@@ -49,7 +49,7 @@ public class Ebook {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "image")
+    @OneToMany(mappedBy = "ebook")
     private List<Image> images;
 
 

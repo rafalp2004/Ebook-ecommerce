@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +36,7 @@ public class User {
     private String password;
 
     @Column(name="registration_date")
-    private Date registrationDate;
+    private LocalDate registrationDate;
 
     @Column(name="is_enabled")
     private boolean enabled;;
