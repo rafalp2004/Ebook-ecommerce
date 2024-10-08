@@ -1,4 +1,4 @@
-package com.ebookeria.ecommerce.service;
+package com.ebookeria.ecommerce.service.user;
 
 import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
 import com.ebookeria.ecommerce.dto.user.UserDTO;
