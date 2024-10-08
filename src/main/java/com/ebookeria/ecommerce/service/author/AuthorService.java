@@ -3,9 +3,7 @@ package com.ebookeria.ecommerce.service.author;
 import com.ebookeria.ecommerce.dto.author.AuthorCreateDTO;
 import com.ebookeria.ecommerce.dto.author.AuthorDTO;
 import com.ebookeria.ecommerce.dto.author.AuthorUpdateDTO;
-import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
-import com.ebookeria.ecommerce.dto.user.UserDTO;
-import com.ebookeria.ecommerce.dto.user.UserUpdateDTO;
+
 
 import java.util.List;
 
