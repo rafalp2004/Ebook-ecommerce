@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @ToString(exclude = {"category", "user","images","authors"})
 public class Ebook {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,30 +30,32 @@ public class Ebook {
     private String description;
 
     @Column(name = "published_year")
-    private Date publishedYear;
+    private LocalDate publishedYear;
 
     @Column(name = "price")
     private double price;
+
+    @Column(name="download_url")
+    private String downloadUrl;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="ebooks_authors",
             joinColumns = @JoinColumn(name="ebook_id"),
             inverseJoinColumns = @JoinColumn(name="author_id")
     )
-    private List<Author> authors;
+    private List<Author> authors = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "ebook")
+    @OneToMany(mappedBy = "ebook", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
-
 
     public void addImage(Image image) {
         if (images == null) {
@@ -66,5 +70,5 @@ public class Ebook {
         }
         authors.add(author);
     }
-
 }
+

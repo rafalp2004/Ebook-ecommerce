@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -26,13 +27,21 @@ public class Author {
     @Column(name="last_name")
     private String lastName;
 
-    @ManyToMany
-    @JoinTable(
-            name="ebooks_authors",
-            joinColumns = @JoinColumn(name="author_id"),
-            inverseJoinColumns = @JoinColumn(name="ebook_id")
-    )
+    @ManyToMany(mappedBy = "authors")
     private List<Ebook> ebooks;
+
+
+    public void addEbook(Ebook ebook) {
+        if (ebooks == null) {
+            ebooks = new ArrayList<>();
+        }
+        ebooks.add(ebook);
+    }
+
+
+    public String getFullName(){
+        return this.firstName + " " + this.lastName;
+    }
 
 
 }

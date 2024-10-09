@@ -10,6 +10,7 @@ import com.ebookeria.ecommerce.dto.category.CategoryUpdateDTO;
 import java.util.List;
 
 public interface CategoryService {
+
     List<CategoryDTO> findAll();
 
     CategoryDTO findById(int id);
