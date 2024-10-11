@@ -9,10 +9,12 @@ import com.ebookeria.ecommerce.repository.AuthorRepository;
 import com.ebookeria.ecommerce.repository.CategoryRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
 import com.ebookeria.ecommerce.repository.UserRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -59,7 +61,7 @@ public class EbookServiceImpl implements EbookService {
                 .stream()
                 .map(id -> {
                     Author author = authorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Author with id: " + id + " not found. Please add author first to author's base"));
-                    author.addEbook(ebook);
+                    ebook.addAuthor(author);
                     return author;
                 })
                 .toList();
@@ -91,6 +93,74 @@ public class EbookServiceImpl implements EbookService {
 
     @Override
     public void update(EbookUpdateDTO ebookUpdateDTO) {
+        Ebook ebook = ebookRepository.findById(ebookUpdateDTO.id())
+                .orElseThrow(() -> new ResourceNotFoundException("Ebook with id: " + ebookUpdateDTO.id() + " not found"));
+
+
+        // Update fields only if they are present in DTO and different
+        if (ebookUpdateDTO.title() != null && !ebook.getTitle().equals(ebookUpdateDTO.title())) {
+            ebook.setTitle(ebookUpdateDTO.title());
+        }
+
+        if (ebookUpdateDTO.description() != null && !ebook.getDescription().equals(ebookUpdateDTO.description())) {
+            ebook.setDescription(ebookUpdateDTO.description());
+        }
+
+        if (ebookUpdateDTO.publishedYear() != null && !ebook.getPublishedYear().equals(ebookUpdateDTO.publishedYear())) {
+            ebook.setPublishedYear(ebookUpdateDTO.publishedYear());
+        }
+        if (ebookUpdateDTO.price() != 0.0 && Double.compare(ebook.getPrice(), ebookUpdateDTO.price()) != 0) {
+            ebook.setPrice(ebookUpdateDTO.price());
+        }
+
+        if (ebookUpdateDTO.downloadUrl() != null && !ebook.getDownloadUrl().equals(ebookUpdateDTO.downloadUrl())) {
+            ebook.setDownloadUrl(ebookUpdateDTO.downloadUrl());
+        }
+
+        if (ebookUpdateDTO.category() != null) {
+            Category category = categoryRepository.findByName(ebookUpdateDTO.category());
+            if (category == null) {
+                throw new ResourceNotFoundException("Category with name: " + ebookUpdateDTO.category() + " not found");
+            }
+            if (!ebook.getCategory().equals(category)) {
+                ebook.setCategory(category);
+            }
+        }
+
+        if (ebookUpdateDTO.authorsId() != null) {
+            List<Integer> currentAuthorIds = ebook.getAuthors().stream().map(Author::getId).toList();
+            List<Integer> newAuthorIds = ebookUpdateDTO.authorsId();
+
+            newAuthorIds.stream()
+                    .filter(id -> !currentAuthorIds.contains(id))
+                    .forEach(id -> {
+                        Author author = authorRepository.findById(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Author with id: " + id + " not found"));
+                        ebook.addAuthor(author);
+                    });
+
+            ebook.getAuthors().removeIf(author -> {
+                boolean toRemove = !newAuthorIds.contains(author.getId());
+                if (toRemove) {
+                    author.getEbooks().remove(ebook);
+                }
+                return toRemove;
+            });
+        }
+
+        if (ebookUpdateDTO.imageUrls() != null) {
+            List<String> newImageUrls = ebookUpdateDTO.imageUrls();
+            ebook.getImages().removeIf(image -> !newImageUrls.contains(image.getUrl()));
+
+            newImageUrls.stream()
+                    .filter(url -> ebook.getImages().stream().noneMatch(image -> image.getUrl().equals(url)))
+                    .forEach(url -> {
+                        Image newImage = new Image();
+                        newImage.setUrl(url);
+                        ebook.addImage(newImage);
+                    });
+        }
+        ebookRepository.save(ebook);
 
     }
 

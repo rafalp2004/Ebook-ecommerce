@@ -43,6 +43,8 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void update(AuthorUpdateDTO authorUpdateDTO) {
         Author author = authorRepository.findById(authorUpdateDTO.id()).orElseThrow(()->new ResourceNotFoundException("Author with id: " + authorUpdateDTO.id() + " not found"));
+        //TODO Update fields only if they are different
+
         author.setFirstName(authorUpdateDTO.firstName());
         author.setLastName(authorUpdateDTO.lastName());
         authorRepository.save(author);

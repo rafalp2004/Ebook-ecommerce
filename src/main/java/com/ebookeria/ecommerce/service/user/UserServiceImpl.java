@@ -57,6 +57,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UserUpdateDTO userUpdateDTO) {
+
+        //TODO Update fields only if they are different
+
         User user = userRepository.findById(userUpdateDTO.id()).orElseThrow(()->new ResourceNotFoundException("User with id: " + userUpdateDTO.id() + " not found"));
         user.setEmail(userUpdateDTO.email());
         user.setFirstName(userUpdateDTO.firstName());

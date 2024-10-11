@@ -20,7 +20,7 @@ public class Image {
     @Column(name="url")
     private String url;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="ebook_id")
     private Ebook ebook;
 

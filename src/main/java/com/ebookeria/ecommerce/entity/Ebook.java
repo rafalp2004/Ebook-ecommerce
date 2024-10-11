@@ -38,11 +38,11 @@ public class Ebook {
     @Column(name="download_url")
     private String downloadUrl;
 
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name="ebooks_authors",
             joinColumns = @JoinColumn(name="ebook_id"),
@@ -50,7 +50,7 @@ public class Ebook {
     )
     private List<Author> authors = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -62,13 +62,22 @@ public class Ebook {
             images = new ArrayList<>();
         }
         images.add(image);
+        image.setEbook(this);
     }
-
     public void addAuthor(Author author) {
         if (authors == null) {
             authors = new ArrayList<>();
         }
         authors.add(author);
+        author.addEbook(this);
     }
+
+    public void removeAuthor(Author author) {
+        if (authors != null) {
+            authors.remove(author);
+            author.getEbooks().remove(this);
+        }
+    }
+
 }
 
