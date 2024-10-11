@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UserUpdateDTO(
-        @NotNull
+        @NotNull(message = "ID cannot be null")
         int id,
 
         @NotBlank

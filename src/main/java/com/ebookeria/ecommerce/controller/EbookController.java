@@ -4,6 +4,7 @@ import com.ebookeria.ecommerce.dto.ebook.EbookCreationDTO;
 import com.ebookeria.ecommerce.dto.ebook.EbookDTO;
 import com.ebookeria.ecommerce.dto.ebook.EbookUpdateDTO;
 import com.ebookeria.ecommerce.service.ebook.EbookService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +35,14 @@ public class EbookController {
     }
 
     @PostMapping(path ="/ebooks")
-    public ResponseEntity<Void> saveEbook(@RequestBody EbookCreationDTO ebookCreationDTO){
+    public ResponseEntity<Void> saveEbook(@Valid @RequestBody EbookCreationDTO ebookCreationDTO){
         ebookService.save(ebookCreationDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
 
     @PutMapping(path="/ebooks")
-    public ResponseEntity<Void>  updateEbook(@RequestBody EbookUpdateDTO ebookUpdateDTO){
+    public ResponseEntity<Void>  updateEbook(@Valid @RequestBody EbookUpdateDTO ebookUpdateDTO){
         ebookService.update(ebookUpdateDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

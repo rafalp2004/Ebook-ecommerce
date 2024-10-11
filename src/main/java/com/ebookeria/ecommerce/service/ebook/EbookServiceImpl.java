@@ -9,19 +9,14 @@ import com.ebookeria.ecommerce.repository.AuthorRepository;
 import com.ebookeria.ecommerce.repository.CategoryRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
 import com.ebookeria.ecommerce.repository.UserRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 
 
 @Service
 public class EbookServiceImpl implements EbookService {
 
-    private static final Logger log = LoggerFactory.getLogger(EbookServiceImpl.class);
     private final EbookRepository ebookRepository;
     private final CategoryRepository categoryRepository;
     private final AuthorRepository authorRepository;
@@ -54,8 +49,7 @@ public class EbookServiceImpl implements EbookService {
         ebook.setPrice(ebookCreationDTO.price());
         ebook.setDownloadUrl(ebookCreationDTO.downloadUrl());
 
-        //TODO add category by id in dto - not by name.
-        Category category = categoryRepository.findByName(ebookCreationDTO.category());
+        Category category = categoryRepository.findById(ebookCreationDTO.categoryId()).orElseThrow(() -> new ResourceNotFoundException("Category with id: " + ebookCreationDTO.categoryId() + " not found. Please add category first to categories base"));
 
         List<Author> authors = ebookCreationDTO.authorsId()
                 .stream()
@@ -109,7 +103,7 @@ public class EbookServiceImpl implements EbookService {
         if (ebookUpdateDTO.publishedYear() != null && !ebook.getPublishedYear().equals(ebookUpdateDTO.publishedYear())) {
             ebook.setPublishedYear(ebookUpdateDTO.publishedYear());
         }
-        if (ebookUpdateDTO.price() != 0.0 && Double.compare(ebook.getPrice(), ebookUpdateDTO.price()) != 0) {
+        if (ebookUpdateDTO.price() != null && Double.compare(ebook.getPrice(), ebookUpdateDTO.price()) != 0) {
             ebook.setPrice(ebookUpdateDTO.price());
         }
 
@@ -117,11 +111,9 @@ public class EbookServiceImpl implements EbookService {
             ebook.setDownloadUrl(ebookUpdateDTO.downloadUrl());
         }
 
-        if (ebookUpdateDTO.category() != null) {
-            Category category = categoryRepository.findByName(ebookUpdateDTO.category());
-            if (category == null) {
-                throw new ResourceNotFoundException("Category with name: " + ebookUpdateDTO.category() + " not found");
-            }
+        if (ebookUpdateDTO.categoryId() != null) {
+            Category category = categoryRepository.findById(ebookUpdateDTO.categoryId()).orElseThrow(() -> new ResourceNotFoundException("Category with id: " + ebookUpdateDTO.categoryId() + " not found. Please add category first to categories base"));
+
             if (!ebook.getCategory().equals(category)) {
                 ebook.setCategory(category);
             }
@@ -166,7 +158,9 @@ public class EbookServiceImpl implements EbookService {
 
     @Override
     public void deleteById(int id) {
-        //TODO Add exceptions to this one and above methods
+        if (!ebookRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Ebook with id: " + id + " not found");
+        }
         ebookRepository.deleteById(id);
     }
 
