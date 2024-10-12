@@ -21,13 +21,13 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public List<AuthorDTO> findAll() {
-        return authorRepository.findAll().stream().map((s)->mapToDTO(s)).toList();
+        return authorRepository.findAll().stream().map((s) -> mapToDTO(s)).toList();
     }
 
 
     @Override
     public AuthorDTO findById(int id) {
-        Author author = authorRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Author with id: " + id + " not found"));
+        Author author = authorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Author with id: " + id + " not found"));
         return mapToDTO(author);
     }
 
@@ -42,11 +42,14 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void update(AuthorUpdateDTO authorUpdateDTO) {
-        Author author = authorRepository.findById(authorUpdateDTO.id()).orElseThrow(()->new ResourceNotFoundException("Author with id: " + authorUpdateDTO.id() + " not found"));
-        //TODO Update fields only if they are different
+        Author author = authorRepository.findById(authorUpdateDTO.id()).orElseThrow(() -> new ResourceNotFoundException("Author with id: " + authorUpdateDTO.id() + " not found"));
 
-        author.setFirstName(authorUpdateDTO.firstName());
-        author.setLastName(authorUpdateDTO.lastName());
+        if (!author.getFirstName().equals(authorUpdateDTO.firstName())) {
+            author.setFirstName(authorUpdateDTO.firstName());
+        }
+        if (!author.getLastName().equals(authorUpdateDTO.lastName())) {
+            author.setLastName(authorUpdateDTO.lastName());
+        }
         authorRepository.save(author);
 
     }

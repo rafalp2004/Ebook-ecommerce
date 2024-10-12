@@ -3,8 +3,11 @@ package com.ebookeria.ecommerce.controller;
 import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
 import com.ebookeria.ecommerce.dto.user.UserDTO;
 import com.ebookeria.ecommerce.dto.user.UserUpdateDTO;
+import com.ebookeria.ecommerce.service.cart.CartService;
 import com.ebookeria.ecommerce.service.user.UserService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +17,13 @@ import java.util.List;
 @RestController
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final CartService cartService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, CartService cartService) {
         this.userService = userService;
+        this.cartService = cartService;
     }
 
 

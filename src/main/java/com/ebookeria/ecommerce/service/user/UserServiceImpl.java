@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -75,12 +77,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(UserUpdateDTO userUpdateDTO) {
 
-        //TODO Update fields only if they are different
-
         User user = userRepository.findById(userUpdateDTO.id()).orElseThrow(()->new ResourceNotFoundException("User with id: " + userUpdateDTO.id() + " not found"));
-        user.setEmail(userUpdateDTO.email());
-        user.setFirstName(userUpdateDTO.firstName());
-        user.setLastName(userUpdateDTO.lastName());
+
+        if(!user.getEmail().equals(userUpdateDTO.email())) {
+            user.setEmail(userUpdateDTO.email());
+        }
+        if(!user.getFirstName().equals(userUpdateDTO.firstName())) {
+            user.setFirstName(userUpdateDTO.firstName());
+        }
+        if(!user.getLastName().equals(userUpdateDTO.lastName())) {
+            user.setLastName(userUpdateDTO.lastName());
+        }
 
          userRepository.save(user);
     }
@@ -104,8 +111,20 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public User getCurrentUser() {
+        String email =null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(principal instanceof UserDetails){
+            email = ((UserDetails)principal).getUsername();
+        }
+        String finalEmail = email;
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User with email:" + finalEmail + " not found"));
+    }
+
     //Todo add changing password
-    //Todo add adding and removing books
+
 
     private UserDTO maptoDTO(User user) {
         return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());

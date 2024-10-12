@@ -4,6 +4,7 @@ import com.ebookeria.ecommerce.dto.user.LoginUserDTO;
 import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
 import com.ebookeria.ecommerce.dto.user.UserDTO;
 import com.ebookeria.ecommerce.dto.user.UserUpdateDTO;
+import com.ebookeria.ecommerce.entity.User;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface UserService {
 
 
     String verify(LoginUserDTO userDTO);
+
+    User getCurrentUser();
 }

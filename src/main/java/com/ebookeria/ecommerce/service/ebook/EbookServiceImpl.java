@@ -9,6 +9,7 @@ import com.ebookeria.ecommerce.repository.AuthorRepository;
 import com.ebookeria.ecommerce.repository.CategoryRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
 import com.ebookeria.ecommerce.repository.UserRepository;
+import com.ebookeria.ecommerce.service.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,12 +22,14 @@ public class EbookServiceImpl implements EbookService {
     private final CategoryRepository categoryRepository;
     private final AuthorRepository authorRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public EbookServiceImpl(EbookRepository ebookRepository, CategoryRepository categoryRepository, AuthorRepository authorRepository, UserRepository userRepository) {
+    public EbookServiceImpl(EbookRepository ebookRepository, CategoryRepository categoryRepository, AuthorRepository authorRepository, UserRepository userRepository, UserService userService) {
         this.ebookRepository = ebookRepository;
         this.categoryRepository = categoryRepository;
         this.authorRepository = authorRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -59,10 +62,7 @@ public class EbookServiceImpl implements EbookService {
                     return author;
                 })
                 .toList();
-
-        //TODO AFTER SPRING SECURITY THIS USER SHOULD BE GET FROM SESSION
-        int id = 1;
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found"));
+        User user = userService.getCurrentUser();
 
         List<Image> images = ebookCreationDTO.imageUrls().
                 stream().

@@ -46,6 +46,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/authors/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories/{id}").permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/cart").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/cart/{id}").authenticated()
+
 
                         .requestMatchers(HttpMethod.POST, "/ebooks").hasAnyRole("ADMIN", "MODERATOR")
                         .requestMatchers(HttpMethod.PUT, "/ebooks").hasAnyRole("ADMIN", "MODERATOR")
