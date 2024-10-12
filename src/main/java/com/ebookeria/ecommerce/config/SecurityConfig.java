@@ -3,6 +3,7 @@ package com.ebookeria.ecommerce.config;
 import com.ebookeria.ecommerce.service.user_details.MyUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -34,7 +35,36 @@ public class SecurityConfig {
 
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(reqeust -> reqeust.requestMatchers("login", "register").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.GET, "/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/ebooks").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/ebooks/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/authors").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categories/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/authors/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categories/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+
+
+                        .requestMatchers(HttpMethod.POST, "/ebooks").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.PUT, "/ebooks").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/ebooks/{id}").hasAnyRole("ADMIN", "MODERATOR")
+
+
+                        .requestMatchers(HttpMethod.POST, "/authors").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.PUT, "/authors").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/authors/{id}").hasAnyRole("ADMIN", "MODERATOR")
+
+                        .requestMatchers(HttpMethod.POST, "/categories/").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.PUT, "/categories/").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/categories/{id}").hasAnyRole("ADMIN", "MODERATOR")
+
+
+
+                        .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/users").hasRole("ADMIN"))
 
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -46,12 +76,13 @@ public class SecurityConfig {
 
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
         provider.setUserDetailsService(myUserDetailsService);
         return provider;
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

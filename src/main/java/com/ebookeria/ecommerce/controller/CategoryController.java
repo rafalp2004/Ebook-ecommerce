@@ -29,25 +29,25 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("categories/{id}")
     public ResponseEntity<CategoryDTO> findCategoryById(@PathVariable int id) {
         CategoryDTO categoryDTO = categoryService.findById(id);
         return new ResponseEntity<>(categoryDTO, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping(path="/categories")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryCreateDTO categoryCreateDTO) {
         CategoryDTO createdCategory = categoryService.save(categoryCreateDTO);
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path="/categories/{id}")
     public ResponseEntity<Void> deleteCategoryById(@PathVariable int id) {
         categoryService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping
+    @PutMapping(path="/categories")
     public ResponseEntity<CategoryUpdateDTO> updateCategory(@Valid @RequestBody CategoryUpdateDTO categoryUpdateDTO) {
         categoryService.update(categoryUpdateDTO);
         return new ResponseEntity<>(categoryUpdateDTO, HttpStatus.OK);
