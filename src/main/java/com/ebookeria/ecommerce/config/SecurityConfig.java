@@ -36,14 +36,15 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.GET, "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/ebooks").permitAll()
                         .requestMatchers(HttpMethod.GET, "/ebooks/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/authors").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/authors/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories/{id}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
 
 
                         .requestMatchers(HttpMethod.POST, "/ebooks").hasAnyRole("ADMIN", "MODERATOR")
