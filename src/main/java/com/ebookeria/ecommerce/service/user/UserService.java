@@ -1,5 +1,6 @@
 package com.ebookeria.ecommerce.service.user;
 
+import com.ebookeria.ecommerce.dto.user.LoginUserDTO;
 import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
 import com.ebookeria.ecommerce.dto.user.UserDTO;
 import com.ebookeria.ecommerce.dto.user.UserUpdateDTO;
@@ -20,4 +21,5 @@ public interface UserService {
     void deleteById(int id);
 
 
+    String verify(LoginUserDTO userDTO);
 }
