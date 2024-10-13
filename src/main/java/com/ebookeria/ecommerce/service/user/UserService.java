@@ -25,4 +25,5 @@ public interface UserService {
     String verify(LoginUserDTO userDTO);
 
     User getCurrentUser();
+    boolean isCurrentUserAdmin();
 }

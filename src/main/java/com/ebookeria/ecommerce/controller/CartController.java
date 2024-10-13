@@ -32,7 +32,6 @@ public class CartController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //TODO Validations that only owner of the cart can have access to that
     @GetMapping(path="/cart/{id}")
     public ResponseEntity<CartDTO> findCartById(@PathVariable int id){
         CartDTO cartDTO = cartService.findById(id);

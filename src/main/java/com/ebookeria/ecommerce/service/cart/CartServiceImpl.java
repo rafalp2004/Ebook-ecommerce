@@ -6,6 +6,7 @@ import com.ebookeria.ecommerce.entity.CartItem;
 import com.ebookeria.ecommerce.entity.Ebook;
 import com.ebookeria.ecommerce.entity.User;
 import com.ebookeria.ecommerce.exception.ResourceNotFoundException;
+import com.ebookeria.ecommerce.exception.UnauthorizedAccessException;
 import com.ebookeria.ecommerce.repository.CartRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
 import com.ebookeria.ecommerce.service.user.UserService;
@@ -45,6 +46,9 @@ public class CartServiceImpl implements CartService {
         int quantity = addItemToCartDTO.quantity();
         Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + cartId + " not found"));
         Ebook ebook = ebookRepository.findById(ebookId).orElseThrow(() -> new ResourceNotFoundException("Ebook with id" + ebookId + " not found"));
+        User currentUser = userService.getCurrentUser();
+
+        verifyUserHasAccess(cart);
 
         Optional<CartItem> existingCartItem = cart.getCartItems().stream().filter(item -> item.getEbook().getId() == ebookId).findFirst();
 
@@ -73,6 +77,9 @@ public class CartServiceImpl implements CartService {
         int cartId = removeItemFromCartDTO.cartId();
         int cartItemId = removeItemFromCartDTO.cartItemId();
         Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + cartId + " not found"));
+        User currentUser = userService.getCurrentUser();
+
+        verifyUserHasAccess(cart);
 
         CartItem cartItem = cart.getCartItems().stream().filter(item -> item.getId() == cartItemId).findFirst().orElseThrow(() -> new RuntimeException("CartItem not found"));
         cart.getCartItems().remove(cartItem);
@@ -84,25 +91,23 @@ public class CartServiceImpl implements CartService {
     }
 
 
-    //TODO Test this method
     @Override
     public CartDTO findById(int id) {
         User currentUser = userService.getCurrentUser();
-
         Cart cart = cartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + id + " not found"));
-        //TODO add possibility for admins
-        if(cart.getUser().getId()==currentUser.getId()) {
-            return mapCartToDTO(cart);
-        }
-        return null;
+
+        verifyUserHasAccess(cart);
+
+        return mapCartToDTO(cart);
     }
+
 
     private CartDTO mapCartToDTO(Cart cart) {
         return new CartDTO(cart.getId(),
                 cart.getCreatedAt(),
                 cart.getLastUpdated(),
                 cart.getCartItems().stream().map(this::mapCartItemToDTO).toList()
-                );
+        );
 
 
     }
@@ -118,9 +123,19 @@ public class CartServiceImpl implements CartService {
         int cartItemId = updateCartItemDTO.cartItemId();
         int newQuantity = updateCartItemDTO.quantity();
         Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + cartId + " not found"));
+
+        verifyUserHasAccess(cart);
+
         CartItem cartItem = cart.getCartItems().stream().filter(item -> item.getId() == cartItemId).findFirst().orElseThrow(() -> new RuntimeException("CartItem not found"));
         cartItem.setQuantity(newQuantity);
 
         cartRepository.save(cart);
+    }
+    private void verifyUserHasAccess(Cart cart){
+        User currentUser = userService.getCurrentUser();
+
+        if (cart.getUser().getId() != currentUser.getId() && !userService.isCurrentUserAdmin()) {
+            throw new UnauthorizedAccessException("You do not have permission to modify this cart.");
+        }
     }
 }

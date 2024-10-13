@@ -123,10 +123,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User with email:" + finalEmail + " not found"));
     }
 
-    //Todo add changing password
 
 
     private UserDTO maptoDTO(User user) {
         return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+    }
+
+    public boolean isCurrentUserAdmin(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
     }
 }
