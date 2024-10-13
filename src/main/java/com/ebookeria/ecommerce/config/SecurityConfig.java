@@ -47,11 +47,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/categories/{id}").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/create_cart").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/cart").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/cart").authenticated()
 
-                        .requestMatchers(HttpMethod.GET, "/cart/{id}").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/cart").authenticated()
 
+
+                        .requestMatchers(HttpMethod.POST, "/transactions").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/transactions").authenticated()
 
                         .requestMatchers(HttpMethod.POST, "/ebooks").hasAnyRole("ADMIN", "MODERATOR")
                         .requestMatchers(HttpMethod.PUT, "/ebooks").hasAnyRole("ADMIN", "MODERATOR")

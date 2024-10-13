@@ -10,6 +10,8 @@ import com.ebookeria.ecommerce.exception.UnauthorizedAccessException;
 import com.ebookeria.ecommerce.repository.CartRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
 import com.ebookeria.ecommerce.service.user.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 @Service
 public class CartServiceImpl implements CartService {
+    private static final Logger log = LoggerFactory.getLogger(CartServiceImpl.class);
     private final UserService userService;
     private final CartRepository cartRepository;
     private final EbookRepository ebookRepository;
@@ -41,6 +44,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addItemToCart(AddItemToCartDTO addItemToCartDTO) {
+        //TODO Remove cartId. It should be get from current User
         int cartId = addItemToCartDTO.cartId();
         int ebookId = addItemToCartDTO.ebookId();
         int quantity = addItemToCartDTO.quantity();
@@ -97,8 +101,21 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + id + " not found"));
 
         verifyUserHasAccess(cart);
-
         return mapCartToDTO(cart);
+    }
+
+    @Override
+    public CartDTO getUserCart() {
+
+        //TODO ensure that one user can't have multiply carts
+
+        User currentUser = userService.getCurrentUser();
+        log.info("raz");
+        Cart cart = cartRepository.findByUserId(currentUser.getId());
+        log.info("dwa");
+        verifyUserHasAccess(cart);
+        return mapCartToDTO(cart);
+
     }
 
 
@@ -131,7 +148,10 @@ public class CartServiceImpl implements CartService {
 
         cartRepository.save(cart);
     }
-    private void verifyUserHasAccess(Cart cart){
+
+
+
+    private void verifyUserHasAccess(Cart cart) {
         User currentUser = userService.getCurrentUser();
 
         if (cart.getUser().getId() != currentUser.getId() && !userService.isCurrentUserAdmin()) {

@@ -1,5 +1,6 @@
 package com.ebookeria.ecommerce.entity;
 
+import com.ebookeria.ecommerce.enums.TransactionStatus;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -7,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,15 +30,17 @@ public class Transaction {
     private User user;
 
     @Column(name="transaction_date")
-    private Date transactionDate;
+    private LocalDateTime transactionDate;
 
     @Column(name="total_sales")
     private double totalSales;
 
     @Column(name="status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
 
-    @OneToMany(mappedBy = "transaction")
+
+    @OneToMany(mappedBy = "transaction",cascade = CascadeType.ALL)
     private List<TransactionItem> transactionItems;
 
 

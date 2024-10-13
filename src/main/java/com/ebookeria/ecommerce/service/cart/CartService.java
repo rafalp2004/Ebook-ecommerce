@@ -10,6 +10,8 @@ public interface CartService {
     void createCart();
     void addItemToCart(AddItemToCartDTO addItemToCartDTO);
     void removeItemFromCart(RemoveItemFromCartDTO removeItemFromCartDTO);
+    //TODO only for admins
     CartDTO findById(int id);
     void updateCartItemQuantity(UpdateCartItemDTO updateCartItemDTO);
+    CartDTO getUserCart();
 }
