@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -59,8 +58,6 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setTransactionItems(transactionItems);
 
         transactionRepository.save(transaction);
-
-        //TODO ensure to clear cart after transaction
 
         cart.getCartItems().clear();
         cartRepository.save(cart);

@@ -9,6 +9,7 @@ import com.ebookeria.ecommerce.exception.ResourceNotFoundException;
 import com.ebookeria.ecommerce.exception.UnauthorizedAccessException;
 import com.ebookeria.ecommerce.repository.CartRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
+import com.ebookeria.ecommerce.repository.UserRepository;
 import com.ebookeria.ecommerce.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,38 +20,37 @@ import java.util.Optional;
 
 @Service
 public class CartServiceImpl implements CartService {
-    private static final Logger log = LoggerFactory.getLogger(CartServiceImpl.class);
     private final UserService userService;
     private final CartRepository cartRepository;
     private final EbookRepository ebookRepository;
+    private final UserRepository userRepository;
 
-    public CartServiceImpl(UserService userService, CartRepository cartRepository, EbookRepository ebookRepository) {
+    public CartServiceImpl(UserService userService, CartRepository cartRepository, EbookRepository ebookRepository, UserRepository userRepository) {
         this.userService = userService;
         this.cartRepository = cartRepository;
         this.ebookRepository = ebookRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public void createCart() {
+    public void createCart(int id) {
         Cart cart = new Cart();
-        cart.setUser(userService.getCurrentUser());
+        User user = userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("User with id: " + id + " not found"));
+        cart.setUser(user);
         cart.setCreatedAt(LocalDateTime.now());
         cart.setLastUpdated(LocalDateTime.now());
 
         cartRepository.save(cart);
-
-
     }
 
     @Override
     public void addItemToCart(AddItemToCartDTO addItemToCartDTO) {
-        //TODO Remove cartId. It should be get from current User
-        int cartId = addItemToCartDTO.cartId();
+        User user = userService.getCurrentUser();
+
         int ebookId = addItemToCartDTO.ebookId();
         int quantity = addItemToCartDTO.quantity();
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + cartId + " not found"));
+        Cart cart = cartRepository.findByUserId(user.getId());
         Ebook ebook = ebookRepository.findById(ebookId).orElseThrow(() -> new ResourceNotFoundException("Ebook with id" + ebookId + " not found"));
-        User currentUser = userService.getCurrentUser();
 
         verifyUserHasAccess(cart);
 
@@ -81,7 +81,6 @@ public class CartServiceImpl implements CartService {
         int cartId = removeItemFromCartDTO.cartId();
         int cartItemId = removeItemFromCartDTO.cartItemId();
         Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + cartId + " not found"));
-        User currentUser = userService.getCurrentUser();
 
         verifyUserHasAccess(cart);
 
@@ -107,12 +106,8 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartDTO getUserCart() {
 
-        //TODO ensure that one user can't have multiply carts
-
         User currentUser = userService.getCurrentUser();
-        log.info("raz");
         Cart cart = cartRepository.findByUserId(currentUser.getId());
-        log.info("dwa");
         verifyUserHasAccess(cart);
         return mapCartToDTO(cart);
 
@@ -136,13 +131,14 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void updateCartItemQuantity(UpdateCartItemDTO updateCartItemDTO) {
-        int cartId = updateCartItemDTO.cartId();
+        User user = userService.getCurrentUser();
+
         int cartItemId = updateCartItemDTO.cartItemId();
         int newQuantity = updateCartItemDTO.quantity();
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + cartId + " not found"));
+        Cart cart = cartRepository.findByUserId(user.getId());
+
 
         verifyUserHasAccess(cart);
-
         CartItem cartItem = cart.getCartItems().stream().filter(item -> item.getId() == cartItemId).findFirst().orElseThrow(() -> new RuntimeException("CartItem not found"));
         cartItem.setQuantity(newQuantity);
 

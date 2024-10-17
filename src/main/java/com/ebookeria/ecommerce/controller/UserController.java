@@ -45,6 +45,8 @@ public class UserController {
     @PostMapping(path = "/users")
     public ResponseEntity<UserCreateDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         UserDTO createdUser =  userService.save(userCreateDTO);
+        cartService.createCart(createdUser.id());
+
         return new ResponseEntity<>(userCreateDTO, HttpStatus.CREATED);
 
     }

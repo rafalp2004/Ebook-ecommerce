@@ -39,7 +39,7 @@ public class User {
     private LocalDate registrationDate;
 
     @Column(name="is_enabled")
-    private boolean enabled;;
+    private boolean enabled;
 
     @OneToMany(mappedBy = "user")
     private List<Ebook> ebooks;

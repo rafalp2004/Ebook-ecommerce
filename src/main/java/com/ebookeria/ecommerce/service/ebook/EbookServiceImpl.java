@@ -21,14 +21,12 @@ public class EbookServiceImpl implements EbookService {
     private final EbookRepository ebookRepository;
     private final CategoryRepository categoryRepository;
     private final AuthorRepository authorRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
 
     public EbookServiceImpl(EbookRepository ebookRepository, CategoryRepository categoryRepository, AuthorRepository authorRepository, UserRepository userRepository, UserService userService) {
         this.ebookRepository = ebookRepository;
         this.categoryRepository = categoryRepository;
         this.authorRepository = authorRepository;
-        this.userRepository = userRepository;
         this.userService = userService;
     }
 

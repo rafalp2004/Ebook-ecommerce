@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-//TODO decide if cart or carts in paths
+
 @RestController
 public class CartController {
     private final CartService cartService;
@@ -18,22 +18,14 @@ public class CartController {
     public CartController(CartService cartService) {
         this.cartService = cartService;
     }
-    //TODO Consider where to create cart
-    //for testing, it wil be change
-    @PostMapping(path="/create_cart")
-    public void createCart(){
-        cartService.createCart();
-    }
 
-
-    @PostMapping(path = "/cart")
+    @PostMapping(path = "/carts")
     public ResponseEntity<Void> addItemToCart(@Valid @RequestBody AddItemToCartDTO addItemToCartDTO) {
         cartService.addItemToCart(addItemToCartDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //TODO it should something removeItemFromCart
-    @DeleteMapping(path = "/cart")
+    @DeleteMapping(path = "/carts/remove-item")
     public ResponseEntity<Void> removeItemToCart(@Valid @RequestBody RemoveItemFromCartDTO removeItemFromCartDTO) {
         cartService.removeItemFromCart(removeItemFromCartDTO);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -44,13 +36,13 @@ public class CartController {
 //        CartDTO cartDTO = cartService.findById(id);
 //        return new ResponseEntity<>(cartDTO, HttpStatus.OK);
 //    }
-    @GetMapping(path = "/cart")
+    @GetMapping(path = "/carts")
     public ResponseEntity<CartDTO> getUserCart() {
         CartDTO cartDTO = cartService.getUserCart();
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 
-    @PutMapping(path = "/cart")
+    @PutMapping(path = "/carts")
     public ResponseEntity<Void> updateCartItemQuantity(@Valid @RequestBody UpdateCartItemDTO updateCartItemDTO) {
         cartService.updateCartItemQuantity(updateCartItemDTO);
         return new ResponseEntity<>(HttpStatus.OK);

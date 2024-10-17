@@ -10,6 +10,7 @@ import com.ebookeria.ecommerce.exception.ResourceNotFoundException;
 import com.ebookeria.ecommerce.repository.RoleRepository;
 import com.ebookeria.ecommerce.repository.UserRepository;
 import com.ebookeria.ecommerce.service.JWT.JWTService;
+import com.ebookeria.ecommerce.service.cart.CartService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> findAll() {
-        return userRepository.findAll().stream().map((s)->maptoDTO(s)).toList();
+        return userRepository.findAll().stream().map(this::maptoDTO).toList();
     }
 
 
@@ -67,7 +68,6 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         Role role = roleRepository.findByName("ROLE_USER");
         user.addRole(role);
-
         userRepository.save(user);
         return maptoDTO(user);
 
@@ -108,7 +108,6 @@ public class UserServiceImpl implements UserService {
             return jwtService.generateToken(userDTO.email());
         }
         return "Fail";
-
     }
 
     @Override
@@ -122,8 +121,6 @@ public class UserServiceImpl implements UserService {
         String finalEmail = email;
         return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User with email:" + finalEmail + " not found"));
     }
-
-
 
     private UserDTO maptoDTO(User user) {
         return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());

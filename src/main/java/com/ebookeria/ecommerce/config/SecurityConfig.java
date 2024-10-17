@@ -46,12 +46,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/authors/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories/{id}").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/cart").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/create_cart").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/cart").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/carts").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/carts/remove-item").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/carts").authenticated()
 
-                        .requestMatchers(HttpMethod.GET, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/carts").authenticated()
 
 
                         .requestMatchers(HttpMethod.POST, "/transactions").authenticated()
