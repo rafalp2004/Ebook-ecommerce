@@ -1,13 +1,12 @@
 package com.ebookeria.ecommerce.service.transaction;
 
-import com.ebookeria.ecommerce.dto.transaction.TransactionDTO;
-import com.ebookeria.ecommerce.entity.Transaction;
-
-import java.util.List;
+import com.ebookeria.ecommerce.dto.transaction.TransactionResponse;
 
 public interface TransactionService {
 
     void createTransaction();
 
-    List<TransactionDTO> getUserTransactions();
+    TransactionResponse getUserTransactions(int pageNo,int pageSize);
+
+    TransactionResponse getAllTransactions();
 }

@@ -2,12 +2,16 @@ package com.ebookeria.ecommerce.service.transaction;
 
 import com.ebookeria.ecommerce.dto.transaction.TransactionDTO;
 import com.ebookeria.ecommerce.dto.transaction.TransactionItemDTO;
+import com.ebookeria.ecommerce.dto.transaction.TransactionResponse;
 import com.ebookeria.ecommerce.entity.*;
 import com.ebookeria.ecommerce.enums.TransactionStatus;
 import com.ebookeria.ecommerce.exception.InvalidTransactionException;
 import com.ebookeria.ecommerce.repository.CartRepository;
 import com.ebookeria.ecommerce.repository.TransactionRepository;
 import com.ebookeria.ecommerce.service.user.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -65,10 +69,18 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDTO> getUserTransactions() {
+    public TransactionResponse getUserTransactions(int pageNo,int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
         User user = userService.getCurrentUser();
-        List<TransactionDTO> transactions = transactionRepository.findTransactionByUserId(user.getId()).stream().map(this::mapTransactionToDTO).toList();
-        return transactions;
+        Page<Transaction> transactions = transactionRepository.findTransactionByUserId(user.getId(), pageable);
+        List<TransactionDTO> listOfTransactions = transactions.getContent().stream().map(this::mapTransactionToDTO).toList();
+        return new TransactionResponse(listOfTransactions, transactions.getNumber(), transactions.getSize(), transactions.getTotalElements(), transactions.getTotalPages(), transactions.isLast());
+    }
+
+    //TODO Implement this class
+    @Override
+    public TransactionResponse getAllTransactions() {
+        return null;
     }
 
     private TransactionDTO mapTransactionToDTO(Transaction transaction) {

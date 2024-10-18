@@ -1,15 +1,13 @@
 package com.ebookeria.ecommerce.service.ebook;
 
-import com.ebookeria.ecommerce.dto.category.CategoryUpdateDTO;
 import com.ebookeria.ecommerce.dto.ebook.EbookCreationDTO;
 import com.ebookeria.ecommerce.dto.ebook.EbookDTO;
+import com.ebookeria.ecommerce.dto.ebook.EbookResponse;
 import com.ebookeria.ecommerce.dto.ebook.EbookUpdateDTO;
-
-import java.util.List;
 
 public interface EbookService {
 
-    List<EbookDTO> findAll();
+    EbookResponse findAll(int pageNo, int pageSize);
 
     EbookDTO findById(int id);
 

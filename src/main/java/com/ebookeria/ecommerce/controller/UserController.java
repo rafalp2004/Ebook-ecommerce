@@ -2,6 +2,7 @@ package com.ebookeria.ecommerce.controller;
 
 import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
 import com.ebookeria.ecommerce.dto.user.UserDTO;
+import com.ebookeria.ecommerce.dto.user.UserResponse;
 import com.ebookeria.ecommerce.dto.user.UserUpdateDTO;
 import com.ebookeria.ecommerce.service.cart.CartService;
 import com.ebookeria.ecommerce.service.user.UserService;
@@ -11,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class UserController {
@@ -28,9 +27,12 @@ public class UserController {
 
 
     @GetMapping(path = "/users")
-    public ResponseEntity<List<UserDTO>> findUsers() {
-        List<UserDTO> users = userService.findAll();
-        if (users.isEmpty()) {
+    public ResponseEntity<UserResponse> findUsers(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        UserResponse users = userService.findAll(pageNo, pageSize);
+        if (users.content().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(users, HttpStatus.OK);

@@ -11,8 +11,6 @@ import com.ebookeria.ecommerce.repository.CartRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
 import com.ebookeria.ecommerce.repository.UserRepository;
 import com.ebookeria.ecommerce.service.user.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -96,7 +94,6 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDTO findById(int id) {
-        User currentUser = userService.getCurrentUser();
         Cart cart = cartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cart with id" + id + " not found"));
 
         verifyUserHasAccess(cart);

@@ -31,11 +31,7 @@ public class CartController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //    @GetMapping(path="/cart")
-//    public ResponseEntity<CartDTO> findCartById(@PathVariable int id){
-//        CartDTO cartDTO = cartService.findById(id);
-//        return new ResponseEntity<>(cartDTO, HttpStatus.OK);
-//    }
+
     @GetMapping(path = "/carts")
     public ResponseEntity<CartDTO> getUserCart() {
         CartDTO cartDTO = cartService.getUserCart();

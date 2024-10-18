@@ -1,18 +1,17 @@
 package com.ebookeria.ecommerce.service.user;
 
-import com.ebookeria.ecommerce.dto.user.LoginUserDTO;
-import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
-import com.ebookeria.ecommerce.dto.user.UserDTO;
-import com.ebookeria.ecommerce.dto.user.UserUpdateDTO;
+import com.ebookeria.ecommerce.dto.user.*;
 import com.ebookeria.ecommerce.entity.Role;
 import com.ebookeria.ecommerce.entity.User;
 import com.ebookeria.ecommerce.exception.ResourceNotFoundException;
 import com.ebookeria.ecommerce.repository.RoleRepository;
 import com.ebookeria.ecommerce.repository.UserRepository;
 import com.ebookeria.ecommerce.service.JWT.JWTService;
-import com.ebookeria.ecommerce.service.cart.CartService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,8 +45,13 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDTO> findAll() {
-        return userRepository.findAll().stream().map(this::maptoDTO).toList();
+    public UserResponse findAll(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<User> users = userRepository.findAll(pageable);
+
+        List<UserDTO> listOfUsers = users.stream().map(this::maptoDTO).toList();
+
+        return new UserResponse(listOfUsers, users.getNumber(), users.getSize(), users.getNumberOfElements(), users.getTotalPages(), users.isLast());
     }
 
 

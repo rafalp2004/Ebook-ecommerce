@@ -1,13 +1,13 @@
 package com.ebookeria.ecommerce.controller;
 
 import com.ebookeria.ecommerce.dto.category.CategoryCreateDTO;
+import com.ebookeria.ecommerce.dto.category.CategoryDTO;
 import com.ebookeria.ecommerce.dto.category.CategoryUpdateDTO;
 import com.ebookeria.ecommerce.service.category.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.ebookeria.ecommerce.dto.category.CategoryDTO;
 
 import java.util.List;
 

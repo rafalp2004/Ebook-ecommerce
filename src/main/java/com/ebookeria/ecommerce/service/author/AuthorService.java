@@ -4,7 +4,6 @@ import com.ebookeria.ecommerce.dto.author.AuthorCreateDTO;
 import com.ebookeria.ecommerce.dto.author.AuthorDTO;
 import com.ebookeria.ecommerce.dto.author.AuthorUpdateDTO;
 
-
 import java.util.List;
 
 public interface AuthorService {

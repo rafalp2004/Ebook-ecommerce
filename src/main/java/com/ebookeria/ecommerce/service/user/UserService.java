@@ -1,17 +1,12 @@
 package com.ebookeria.ecommerce.service.user;
 
-import com.ebookeria.ecommerce.dto.user.LoginUserDTO;
-import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
-import com.ebookeria.ecommerce.dto.user.UserDTO;
-import com.ebookeria.ecommerce.dto.user.UserUpdateDTO;
+import com.ebookeria.ecommerce.dto.user.*;
 import com.ebookeria.ecommerce.entity.User;
-
-import java.util.List;
 
 
 public interface UserService {
 
-    List<UserDTO> findAll();
+    UserResponse findAll(int pageNo, int pageSize);
 
     UserDTO findById(int id);
 

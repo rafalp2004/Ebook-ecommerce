@@ -1,7 +1,5 @@
 package com.ebookeria.ecommerce.dto.ebook;
 
-import com.ebookeria.ecommerce.entity.Author;
-
 import java.time.LocalDate;
 import java.util.List;
 

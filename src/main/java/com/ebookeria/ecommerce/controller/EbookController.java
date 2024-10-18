@@ -2,14 +2,13 @@ package com.ebookeria.ecommerce.controller;
 
 import com.ebookeria.ecommerce.dto.ebook.EbookCreationDTO;
 import com.ebookeria.ecommerce.dto.ebook.EbookDTO;
+import com.ebookeria.ecommerce.dto.ebook.EbookResponse;
 import com.ebookeria.ecommerce.dto.ebook.EbookUpdateDTO;
 import com.ebookeria.ecommerce.service.ebook.EbookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class EbookController {
@@ -20,12 +19,15 @@ public class EbookController {
     }
 
     @GetMapping(path="/ebooks")
-    public ResponseEntity<List<EbookDTO>> findEbooks(){
-        List<EbookDTO> ebookDTOs = ebookService.findAll();
-        if(ebookDTOs.isEmpty()){
+    public ResponseEntity<EbookResponse> findEbooks(
+            @RequestParam(value="pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value="pageSize", defaultValue = "10", required = false) int pageSize
+            ){
+        EbookResponse ebookResponse = ebookService.findAll(pageNo,pageSize);
+        if(ebookResponse.content().isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(ebookDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(ebookResponse, HttpStatus.OK);
     }
 
     @GetMapping(path = "/ebooks/{id}")

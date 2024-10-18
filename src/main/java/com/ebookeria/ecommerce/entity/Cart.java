@@ -26,7 +26,7 @@ public class Cart {
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cart",fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     List<CartItem> cartItems;
 
     public void addCartItem(CartItem cartItem){

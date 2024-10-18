@@ -2,6 +2,7 @@ package com.ebookeria.ecommerce.service.ebook;
 
 import com.ebookeria.ecommerce.dto.ebook.EbookCreationDTO;
 import com.ebookeria.ecommerce.dto.ebook.EbookDTO;
+import com.ebookeria.ecommerce.dto.ebook.EbookResponse;
 import com.ebookeria.ecommerce.dto.ebook.EbookUpdateDTO;
 import com.ebookeria.ecommerce.entity.*;
 import com.ebookeria.ecommerce.exception.ResourceNotFoundException;
@@ -10,6 +11,9 @@ import com.ebookeria.ecommerce.repository.CategoryRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
 import com.ebookeria.ecommerce.repository.UserRepository;
 import com.ebookeria.ecommerce.service.user.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,8 +35,12 @@ public class EbookServiceImpl implements EbookService {
     }
 
     @Override
-    public List<EbookDTO> findAll() {
-        return ebookRepository.findAll().stream().map(this::mapToDTO).toList();
+    public EbookResponse findAll(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Ebook> ebooks =  ebookRepository.findAll(pageable);
+        List<EbookDTO> listOfEbooks = ebooks.getContent().stream().map(this::mapToDTO).toList();
+
+        return new EbookResponse(listOfEbooks, ebooks.getNumber(), ebooks.getSize(), ebooks.getNumberOfElements(), ebooks.getTotalPages(), ebooks.isLast() );
     }
 
     @Override
