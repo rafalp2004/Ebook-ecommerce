@@ -8,5 +8,5 @@ public interface TransactionService {
 
     TransactionResponse getUserTransactions(int pageNo,int pageSize);
 
-    TransactionResponse getAllTransactions();
+    TransactionResponse getAllTransactions(int pageNo,int pageSize);
 }

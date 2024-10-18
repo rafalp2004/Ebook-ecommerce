@@ -31,6 +31,18 @@ public class TransactionController {
 
        TransactionResponse transactionResponse = transactionService.getUserTransactions(pageNo, pageSize);
         return new ResponseEntity<>(transactionResponse,HttpStatus.OK);
-
     }
+
+
+    //TODO add some panel only for admins
+    @GetMapping(path="admin/transactions")
+    public ResponseEntity<TransactionResponse> getAllTransactions(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ){
+
+        TransactionResponse transactionResponse = transactionService.getAllTransactions(pageNo, pageSize);
+        return new ResponseEntity<>(transactionResponse,HttpStatus.OK);
+    }
+
 }

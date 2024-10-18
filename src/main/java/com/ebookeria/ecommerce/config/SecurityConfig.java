@@ -68,12 +68,22 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/categories/").hasAnyRole("ADMIN", "MODERATOR")
                         .requestMatchers(HttpMethod.DELETE, "/categories/{id}").hasAnyRole("ADMIN", "MODERATOR")
 
-
-
+                        .requestMatchers(HttpMethod.GET, "/admin/transactions").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users").hasRole("ADMIN"))
+                        .requestMatchers(HttpMethod.PUT, "/users").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll()
+                        .anyRequest().authenticated()
+                )
+
+
+
+
 
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

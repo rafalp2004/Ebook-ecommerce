@@ -77,10 +77,12 @@ public class TransactionServiceImpl implements TransactionService {
         return new TransactionResponse(listOfTransactions, transactions.getNumber(), transactions.getSize(), transactions.getTotalElements(), transactions.getTotalPages(), transactions.isLast());
     }
 
-    //TODO Implement this class
     @Override
-    public TransactionResponse getAllTransactions() {
-        return null;
+    public TransactionResponse getAllTransactions(int pageNo,int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Transaction> transactions = transactionRepository.findAll(pageable);
+        List<TransactionDTO> listOfTransactions = transactions.getContent().stream().map(this::mapTransactionToDTO).toList();
+        return new TransactionResponse(listOfTransactions, transactions.getNumber(), transactions.getSize(), transactions.getTotalElements(), transactions.getTotalPages(), transactions.isLast());
     }
 
     private TransactionDTO mapTransactionToDTO(Transaction transaction) {
