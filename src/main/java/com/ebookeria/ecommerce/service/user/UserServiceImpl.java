@@ -81,7 +81,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(UserUpdateDTO userUpdateDTO) {
 
-        User user = userRepository.findById(userUpdateDTO.id()).orElseThrow(()->new ResourceNotFoundException("User with id: " + userUpdateDTO.id() + " not found"));
+
+        User user =getCurrentUser();
 
         if(!user.getEmail().equals(userUpdateDTO.email())) {
             user.setEmail(userUpdateDTO.email());
@@ -103,11 +104,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void changePassword(UserChangePasswordDTO userChangePasswordDTO) {
+        User user = getCurrentUser();
+        user.setPassword(encoder.encode(userChangePasswordDTO.password()));
+        userRepository.save(user);
+
+    }
+
+    @Override
     public String verify(LoginUserDTO userDTO) {
-        log.info("bbbbbb");
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.email(), userDTO.password()));
-        log.info("asdasd");
         if(authentication.isAuthenticated()){
             return jwtService.generateToken(userDTO.email());
         }

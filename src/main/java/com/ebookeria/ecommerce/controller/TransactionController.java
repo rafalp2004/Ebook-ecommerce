@@ -22,7 +22,6 @@ public class TransactionController {
         this.checkoutService = checkoutService;
     }
 
-    //TODO add exception to GlobalHandler
     @PostMapping(path="/transactions")
     public ResponseEntity<String> createTransaction() throws StripeException {
         Transaction transaction = transactionService.createTransaction();
@@ -42,7 +41,6 @@ public class TransactionController {
     }
 
 
-    //TODO add some panel only for admins
     @GetMapping(path="admin/transactions")
     public ResponseEntity<TransactionResponse> getAllTransactions(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,

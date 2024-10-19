@@ -6,9 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UserUpdateDTO(
-        @NotNull(message = "ID cannot be null")
-        int id,
-
         @NotBlank
         @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
         String firstName,

@@ -1,9 +1,6 @@
 package com.ebookeria.ecommerce.controller;
 
-import com.ebookeria.ecommerce.dto.user.UserCreateDTO;
-import com.ebookeria.ecommerce.dto.user.UserDTO;
-import com.ebookeria.ecommerce.dto.user.UserResponse;
-import com.ebookeria.ecommerce.dto.user.UserUpdateDTO;
+import com.ebookeria.ecommerce.dto.user.*;
 import com.ebookeria.ecommerce.service.cart.CartService;
 import com.ebookeria.ecommerce.service.user.UserService;
 import jakarta.validation.Valid;
@@ -65,7 +62,12 @@ public class UserController {
          userService.update(userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
-    //TODO Add changing passsword
+    @PutMapping(path = "/users/change-password")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody UserChangePasswordDTO userChangePasswordDTO) {
+        userService.changePassword(userChangePasswordDTO);
+        return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
+    }
+
 
 
 }

@@ -3,6 +3,7 @@ package com.ebookeria.ecommerce.service.checkout;
 
 import com.ebookeria.ecommerce.entity.Transaction;
 import com.ebookeria.ecommerce.entity.TransactionItem;
+import com.ebookeria.ecommerce.exception.MyStripeException;
 import com.ebookeria.ecommerce.repository.TransactionRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -25,7 +26,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     }
 
     @Override
-    public String createPayment(Transaction transaction) throws StripeException {
+    public String createPayment(Transaction transaction)  {
 
 
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
@@ -59,7 +60,12 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
 
         SessionCreateParams params = paramsBuilder.build();
-        Session session = Session.create(params);
+        Session session = null;
+        try {
+            session = Session.create(params);
+        } catch (StripeException e) {
+            throw new MyStripeException(e);
+        }
 
         return session.getUrl();
 

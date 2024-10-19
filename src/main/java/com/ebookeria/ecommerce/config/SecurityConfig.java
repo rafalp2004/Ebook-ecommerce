@@ -72,8 +72,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users").hasRole("ADMIN")
-
+                        .requestMatchers(HttpMethod.PUT, "/users").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/users/change-password").authenticated()
 
                         .requestMatchers(HttpMethod.POST, "/checkout/**").permitAll()
 
@@ -81,7 +81,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/webhook").permitAll()
 
 
-
+///users/change-password
 
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs").permitAll()

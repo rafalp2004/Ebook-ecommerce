@@ -12,13 +12,15 @@ public interface UserService {
 
     UserDTO save(UserCreateDTO userCreateDTO);
 
-   void update(UserUpdateDTO userUpdateDTO);
+    void update(UserUpdateDTO userUpdateDTO);
 
     void deleteById(int id);
 
+    void changePassword(UserChangePasswordDTO userChangePasswordDTO);
 
     String verify(LoginUserDTO userDTO);
 
     User getCurrentUser();
+
     boolean isCurrentUserAdmin();
 }
