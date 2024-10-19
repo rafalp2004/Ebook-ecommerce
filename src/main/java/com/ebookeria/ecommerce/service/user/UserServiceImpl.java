@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,8 +46,11 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserResponse findAll(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
+    public UserResponse findAll(int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())?Sort.by(sortField).ascending():
+                Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<User> users = userRepository.findAll(pageable);
 
         List<UserDTO> listOfUsers = users.stream().map(this::maptoDTO).toList();

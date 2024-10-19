@@ -6,7 +6,7 @@ import com.ebookeria.ecommerce.entity.User;
 
 public interface UserService {
 
-    UserResponse findAll(int pageNo, int pageSize);
+    UserResponse findAll(int pageNo, int pageSize, String sortField,String sortDirection);
 
     UserDTO findById(int id);
 

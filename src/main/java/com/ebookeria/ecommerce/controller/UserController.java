@@ -26,9 +26,12 @@ public class UserController {
     @GetMapping(path = "/users")
     public ResponseEntity<UserResponse> findUsers(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
-    ) {
-        UserResponse users = userService.findAll(pageNo, pageSize);
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value="sortField", defaultValue = "email", required = false) String sortField,
+            @RequestParam(value="sortDirection", defaultValue = "asc", required = false) String sortDirection
+
+            ) {
+        UserResponse users = userService.findAll(pageNo, pageSize, sortField, sortDirection);
         if (users.content().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

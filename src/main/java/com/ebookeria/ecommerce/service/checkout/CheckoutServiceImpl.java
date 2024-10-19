@@ -18,10 +18,8 @@ import org.springframework.stereotype.Service;
 public class CheckoutServiceImpl implements CheckoutService {
 
     private static final Logger log = LoggerFactory.getLogger(CheckoutServiceImpl.class);
-    private final TransactionRepository transactionRepository;
 
     public CheckoutServiceImpl(TransactionRepository transactionRepository, @Value("${stripe.key.secret}") String secretKey) {
-        this.transactionRepository = transactionRepository;
         Stripe.apiKey = secretKey;
     }
 
@@ -67,6 +65,9 @@ public class CheckoutServiceImpl implements CheckoutService {
             throw new MyStripeException(e);
         }
 
+        log.info("Paymemt status {}",session.getPaymentStatus());
+
+        log.info("Session status {}",session.getPaymentIntent());
         return session.getUrl();
 
     }

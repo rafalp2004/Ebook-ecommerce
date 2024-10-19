@@ -54,7 +54,6 @@ public class StripeWebhookController {
 
         switch (event.getType()) {
             case "payment_intent.succeeded":
-                log.info("AAAAAAAAAAAAAAAAAAAAAAAAA");
 
                 handlePaymentIntentSucceeded(event);
                 break;
@@ -71,9 +70,9 @@ public class StripeWebhookController {
     private void handlePaymentIntentSucceeded(Event event) {
         //TODO Resolve this problem. Transaction status has to change to PAID or use Success url and do it without webhooks.
         EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
-        log.info("bbbbb");
+
         Session session = (Session) deserializer.getObject().orElse(null);
-        log.info("sdasda");
+
 
         if (session != null) {
             int transactionId = Integer.parseInt(session.getClientReferenceId());

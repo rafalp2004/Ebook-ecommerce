@@ -7,7 +7,7 @@ import com.ebookeria.ecommerce.dto.ebook.EbookUpdateDTO;
 
 public interface EbookService {
 
-    EbookResponse findAll(int pageNo, int pageSize);
+    EbookResponse findAll(int pageNo, int pageSize,String sortField,String sortDirection);
 
     EbookDTO findById(int id);
 

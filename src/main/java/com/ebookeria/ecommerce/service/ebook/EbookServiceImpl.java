@@ -14,6 +14,7 @@ import com.ebookeria.ecommerce.service.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,8 +36,11 @@ public class EbookServiceImpl implements EbookService {
     }
 
     @Override
-    public EbookResponse findAll(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
+    public EbookResponse findAll(int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())?Sort.by(sortField).ascending():
+                Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize,sort);
         Page<Ebook> ebooks =  ebookRepository.findAll(pageable);
         List<EbookDTO> listOfEbooks = ebooks.getContent().stream().map(this::mapToDTO).toList();
 

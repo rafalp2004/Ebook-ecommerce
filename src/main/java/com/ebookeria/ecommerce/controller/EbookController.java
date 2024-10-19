@@ -21,9 +21,11 @@ public class EbookController {
     @GetMapping(path="/ebooks")
     public ResponseEntity<EbookResponse> findEbooks(
             @RequestParam(value="pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value="pageSize", defaultValue = "10", required = false) int pageSize
+            @RequestParam(value="pageSize", defaultValue = "10", required = false) int pageSize,
+              @RequestParam(value="sortField", defaultValue = "title", required = false) String sortField,
+            @RequestParam(value="sortDirection", defaultValue = "asc", required = false) String sortDirection
             ){
-        EbookResponse ebookResponse = ebookService.findAll(pageNo,pageSize);
+        EbookResponse ebookResponse = ebookService.findAll(pageNo,pageSize, sortField, sortDirection);
         if(ebookResponse.content().isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
