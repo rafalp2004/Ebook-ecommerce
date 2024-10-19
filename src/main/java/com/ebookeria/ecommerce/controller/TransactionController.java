@@ -1,7 +1,10 @@
 package com.ebookeria.ecommerce.controller;
 
 import com.ebookeria.ecommerce.dto.transaction.TransactionResponse;
+import com.ebookeria.ecommerce.entity.Transaction;
+import com.ebookeria.ecommerce.service.checkout.CheckoutService;
 import com.ebookeria.ecommerce.service.transaction.TransactionService;
+import com.stripe.exception.StripeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,15 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TransactionController {
     private final TransactionService transactionService;
+    private final CheckoutService checkoutService;
 
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, CheckoutService checkoutService) {
         this.transactionService = transactionService;
+        this.checkoutService = checkoutService;
     }
 
+    //TODO add exception to GlobalHandler
     @PostMapping(path="/transactions")
-    public ResponseEntity<Void> createTransaction(){
-        transactionService.createTransaction();
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<String> createTransaction() throws StripeException {
+        Transaction transaction = transactionService.createTransaction();
+
+        String paymentUrl = checkoutService.createPayment(transaction);
+        return new ResponseEntity<>(paymentUrl,HttpStatus.CREATED);
     }
 
     @GetMapping(path="/transactions")

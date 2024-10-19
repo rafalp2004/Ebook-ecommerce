@@ -74,6 +74,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/users").hasRole("ADMIN")
 
+
+                        .requestMatchers(HttpMethod.POST, "/checkout/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/checkout/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/webhook").permitAll()
+
+
+
+
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs").permitAll()
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()

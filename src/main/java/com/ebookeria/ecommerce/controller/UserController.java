@@ -65,5 +65,7 @@ public class UserController {
          userService.update(userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
+    //TODO Add changing passsword
+
 
 }

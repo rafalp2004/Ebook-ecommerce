@@ -33,7 +33,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public void createTransaction() {
+    public Transaction createTransaction() {
         User user = userService.getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(user.getId());
@@ -65,6 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         cart.getCartItems().clear();
         cartRepository.save(cart);
+        return transaction;
 
     }
 

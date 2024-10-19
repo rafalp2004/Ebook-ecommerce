@@ -40,7 +40,6 @@ public class Transaction {
     @OneToMany(mappedBy = "transaction",cascade = CascadeType.ALL)
     private List<TransactionItem> transactionItems;
 
-
     public void addTransactionItem(TransactionItem transactionItem) {
         if (transactionItems == null) {
             transactionItems = new ArrayList<>();
