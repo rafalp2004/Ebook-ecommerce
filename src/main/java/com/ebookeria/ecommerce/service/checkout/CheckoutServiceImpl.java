@@ -14,26 +14,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
 
     private static final Logger log = LoggerFactory.getLogger(CheckoutServiceImpl.class);
 
-    public CheckoutServiceImpl(TransactionRepository transactionRepository, @Value("${stripe.key.secret}") String secretKey) {
+    public CheckoutServiceImpl( @Value("${stripe.key.secret}") String secretKey) {
         Stripe.apiKey = secretKey;
     }
 
     @Override
-    public String createPayment(Transaction transaction)  {
+    public String createPayment(Transaction transaction) {
+
+        Map<String, String> paymentIntentMetaData = new HashMap<>();
+        paymentIntentMetaData.put("transaction_id", String.valueOf(transaction.getId()));
+
+        SessionCreateParams.PaymentIntentData paymentIntentData = SessionCreateParams.PaymentIntentData.builder()
+                .putAllMetadata(paymentIntentMetaData).build();
 
 
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl("http://localhost:8080/api/checkout/success.html")
                 .setCancelUrl("http://localhost:8080/api/checkout/cancel.html")
-                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                .setClientReferenceId(String.valueOf(transaction.getId()));  // Set the transaction ID as client_reference_id
-
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setPaymentIntentData(paymentIntentData);
 
 
         for (TransactionItem item : transaction.getTransactionItems()) {
@@ -58,16 +66,16 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
 
         SessionCreateParams params = paramsBuilder.build();
-        Session session = null;
+        Session session;
         try {
             session = Session.create(params);
         } catch (StripeException e) {
             throw new MyStripeException(e);
         }
 
-        log.info("Paymemt status {}",session.getPaymentStatus());
+        log.info("Paymemt status {}", session.getPaymentStatus());
 
-        log.info("Session status {}",session.getPaymentIntent());
+        log.info("Session status {}", session.getPaymentIntent());
         return session.getUrl();
 
     }
