@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
     private final CartService cartService;
 
@@ -37,6 +36,10 @@ public class UserController {
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+
+
+
 
     @GetMapping(path = "/users/{id}")
     public ResponseEntity<UserDTO> findUserById(@PathVariable int id) {

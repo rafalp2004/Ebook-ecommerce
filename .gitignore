@@ -34,3 +34,5 @@ build/
 
 ### configuration file
 application.properties
+
+credentials.json

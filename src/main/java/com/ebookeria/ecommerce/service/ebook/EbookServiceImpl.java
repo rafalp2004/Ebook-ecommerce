@@ -1,9 +1,6 @@
 package com.ebookeria.ecommerce.service.ebook;
 
-import com.ebookeria.ecommerce.dto.ebook.EbookCreationDTO;
-import com.ebookeria.ecommerce.dto.ebook.EbookDTO;
-import com.ebookeria.ecommerce.dto.ebook.EbookResponse;
-import com.ebookeria.ecommerce.dto.ebook.EbookUpdateDTO;
+import com.ebookeria.ecommerce.dto.ebook.*;
 import com.ebookeria.ecommerce.entity.*;
 import com.ebookeria.ecommerce.exception.ResourceNotFoundException;
 import com.ebookeria.ecommerce.repository.AuthorRepository;
@@ -11,6 +8,7 @@ import com.ebookeria.ecommerce.repository.CategoryRepository;
 import com.ebookeria.ecommerce.repository.EbookRepository;
 import com.ebookeria.ecommerce.repository.UserRepository;
 import com.ebookeria.ecommerce.service.user.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 
+@Log4j2
 @Service
 public class EbookServiceImpl implements EbookService {
 
@@ -28,7 +27,7 @@ public class EbookServiceImpl implements EbookService {
     private final AuthorRepository authorRepository;
     private final UserService userService;
 
-    public EbookServiceImpl(EbookRepository ebookRepository, CategoryRepository categoryRepository, AuthorRepository authorRepository, UserRepository userRepository, UserService userService) {
+    public EbookServiceImpl(EbookRepository ebookRepository, CategoryRepository categoryRepository, AuthorRepository authorRepository, UserService userService) {
         this.ebookRepository = ebookRepository;
         this.categoryRepository = categoryRepository;
         this.authorRepository = authorRepository;
@@ -42,7 +41,7 @@ public class EbookServiceImpl implements EbookService {
 
         Pageable pageable = PageRequest.of(pageNo, pageSize,sort);
         Page<Ebook> ebooks =  ebookRepository.findAll(pageable);
-        List<EbookDTO> listOfEbooks = ebooks.getContent().stream().map(this::mapToDTO).toList();
+        List<EbookDTO> listOfEbooks = ebooks.getContent().stream().map(this::mapToEbookDTO).toList();
 
         return new EbookResponse(listOfEbooks, ebooks.getNumber(), ebooks.getSize(), ebooks.getNumberOfElements(), ebooks.getTotalPages(), ebooks.isLast() );
     }
@@ -50,7 +49,25 @@ public class EbookServiceImpl implements EbookService {
     @Override
     public EbookDTO findById(int id) {
         Ebook ebook = ebookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ebook with id: " + id + " not found"));
-        return mapToDTO(ebook);
+        return mapToEbookDTO(ebook);
+    }
+
+    @Override
+    public EbookUserPanelResponse findUsersBook(int pageNo, int pageSize, String sortField, String sortDirection) {
+        User currentUser = userService.getCurrentUser();
+        String ebookSortField = "ebook." + sortField;
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(ebookSortField).ascending()
+                : Sort.by(ebookSortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page<Ebook> ebooks =  ebookRepository.findUsersBoughtEbooksByUserId(currentUser.getId(),pageable);
+
+        ebooks.stream().forEach((e)->log.info(e.toString()));
+        List<EbookUserPanelDTO> listOfEbooks = ebooks.getContent().stream().map(this::mapToEbookUserPanelDTO).toList();
+
+        return new EbookUserPanelResponse(listOfEbooks, ebooks.getNumber(), ebooks.getSize(), ebooks.getNumberOfElements(), ebooks.getTotalPages(), ebooks.isLast() );
     }
 
     @Override
@@ -91,7 +108,7 @@ public class EbookServiceImpl implements EbookService {
         ebook.setImages(images);
 
         ebookRepository.save(ebook);
-        return mapToDTO(ebook);
+        return mapToEbookDTO(ebook);
     }
 
 
@@ -174,7 +191,15 @@ public class EbookServiceImpl implements EbookService {
         ebookRepository.deleteById(id);
     }
 
-    private EbookDTO mapToDTO(Ebook s) {
+    private EbookUserPanelDTO mapToEbookUserPanelDTO(Ebook s){
+        return new EbookUserPanelDTO(s.getId(),
+                s.getTitle(),
+                s.getImages().getFirst().getUrl(),
+                s.getDownloadUrl()
+        );
+    }
+
+    private EbookDTO mapToEbookDTO(Ebook s) {
         return new EbookDTO(
                 s.getId(),
                 s.getTitle(),

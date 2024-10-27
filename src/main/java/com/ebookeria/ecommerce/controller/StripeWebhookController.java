@@ -1,14 +1,8 @@
 package com.ebookeria.ecommerce.controller;
 
-import com.ebookeria.ecommerce.entity.Transaction;
-import com.ebookeria.ecommerce.enums.TransactionStatus;
-import com.ebookeria.ecommerce.exception.ResourceNotFoundException;
-import com.ebookeria.ecommerce.repository.TransactionRepository;
+import com.ebookeria.ecommerce.service.webhook.StripeWebhookService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
-import com.stripe.model.EventDataObjectDeserializer;
-import com.stripe.model.PaymentIntent;
-import com.stripe.model.StripeObject;
 import com.stripe.net.Webhook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +20,11 @@ public class StripeWebhookController {
     private static final Logger log = LoggerFactory.getLogger(StripeWebhookController.class);
     @Value("${webhook.key.secret}")
     private String webhookSecretKey;
-    private final TransactionRepository transactionRepository;
+    private final StripeWebhookService stripeWebhookService;
 
-    public StripeWebhookController(TransactionRepository transactionRepository) {
+    public StripeWebhookController(StripeWebhookService stripeWebhookService) {
 
-        this.transactionRepository = transactionRepository;
+        this.stripeWebhookService = stripeWebhookService;
     }
 
 
@@ -50,36 +44,13 @@ public class StripeWebhookController {
 
         switch (event.getType()) {
             case "payment_intent.succeeded":
-
-                handlePaymentIntentSucceeded(event);
+                stripeWebhookService.handlePaymentIntentSucceeded(event);
                 break;
-            case "payment_intent.payment_failed":
-                log.info("failed");
+            case "payment_intent.payment_canceled":
+                stripeWebhookService.handlePaymentIntentCanceled(event);
                 break;
-
         }
-
         return ResponseEntity.ok("Webhook processed");
-
-
-    }
-
-    private void handlePaymentIntentSucceeded(Event event) {
-        EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
-        StripeObject stripeObject = deserializer.getObject().orElse(null);
-        if (stripeObject instanceof PaymentIntent paymentIntent) {
-            String transactionIdStr = paymentIntent.getMetadata().get("transaction_id");
-            if (transactionIdStr != null) {
-                int transactionId = Integer.parseInt(transactionIdStr);
-                log.info("✅ Payment succeeded for Transaction ID: {}", transactionId);
-                Transaction transaction = transactionRepository.findById(transactionId).orElseThrow(() -> new ResourceNotFoundException("Transaction with id: " + transactionId + " not found"));
-                transaction.setStatus(TransactionStatus.COMPLETED);
-                transactionRepository.save(transaction);
-            } else {
-                log.warn("⚠️ Transaction ID not found in PaymentIntent metadata.");
-
-            }
-        }
 
 
     }

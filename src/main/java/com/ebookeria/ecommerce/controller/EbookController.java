@@ -1,9 +1,6 @@
 package com.ebookeria.ecommerce.controller;
 
-import com.ebookeria.ecommerce.dto.ebook.EbookCreationDTO;
-import com.ebookeria.ecommerce.dto.ebook.EbookDTO;
-import com.ebookeria.ecommerce.dto.ebook.EbookResponse;
-import com.ebookeria.ecommerce.dto.ebook.EbookUpdateDTO;
+import com.ebookeria.ecommerce.dto.ebook.*;
 import com.ebookeria.ecommerce.service.ebook.EbookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -31,6 +28,21 @@ public class EbookController {
         }
         return new ResponseEntity<>(ebookResponse, HttpStatus.OK);
     }
+
+    @GetMapping(path="/my_ebooks")
+    public ResponseEntity<EbookUserPanelResponse> findUserEbooks(
+            @RequestParam(value="pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value="pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value="sortField", defaultValue = "title", required = false) String sortField,
+            @RequestParam(value="sortDirection", defaultValue = "asc", required = false) String sortDirection
+    ){
+        EbookUserPanelResponse ebookResponse = ebookService.findUsersBook(pageNo,pageSize, sortField, sortDirection);
+        if(ebookResponse.content().isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(ebookResponse, HttpStatus.OK);
+    }
+
 
     @GetMapping(path = "/ebooks/{id}")
     public ResponseEntity<EbookDTO> findEbookById(@PathVariable int id){
