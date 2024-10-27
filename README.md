@@ -1,4 +1,4 @@
-# Ebookeria E-commerce Platform
+# Ebookeria E-commerce Platform with Stripe and GmailAPI
 
 **Status:** Under continuous development 🚧
 
